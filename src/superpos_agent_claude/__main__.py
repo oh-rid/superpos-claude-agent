@@ -8,6 +8,7 @@ import logging
 import superpos_agent_core.main as _core_main
 from superpos_agent_core import run_agent
 
+from . import rids_platform
 from .claude_executor import ClaudeExecutor
 from .config import ClaudeConfig
 from .runtime_config import ClaudeRuntimeConfig
@@ -20,6 +21,9 @@ log = logging.getLogger(__name__)
 # Telegram on every start; that dashboard no longer exists for this agent.
 # Required permissions are still checked and reported.
 _core_main._OPTIONAL_PERMISSIONS = ()
+
+# Heartbeat carries the agent's own Telegram bot name/@username (rids_platform).
+rids_platform.install()
 
 
 async def main() -> None:
