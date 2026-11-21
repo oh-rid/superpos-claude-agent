@@ -42,6 +42,20 @@ def call_tool(executor):
     """
     config = executor._build_ask_mcp_server()
     server = config["instance"] if isinstance(config, dict) else config.instance
+    if not hasattr(server, "request_handlers"):
+        # mcp 2.x (claude-agent-sdk 0.2.187+): the handler registry is private;
+        # drive the same Server through the in-process mcp Client instead.
+        from mcp import Client as _McpClient
+
+        async def _invoke(arguments):
+            async with _McpClient(server) as client:
+                res = await client.call_tool(_ASK_MCP_TOOL, arguments)
+            # mcp 2.x renamed CallToolResult.isError -> is_error
+            import types as _t
+            return _t.SimpleNamespace(isError=res.is_error, content=res.content)
+
+        return _invoke
+
     request_handler = server.request_handlers[_mcp_types.CallToolRequest]
 
     async def _invoke(arguments):

@@ -12,7 +12,7 @@ executor treated it as a pre-init crash with optional MCP present → stripped
 ask/search and degraded on every message.
 
 The SDK migrated (issue #40) from the frozen ``claude-code-sdk==0.0.25`` (a
-2.0.x-era protocol) to its renamed successor ``claude-agent-sdk==0.2.110``,
+2.0.x-era protocol) to its renamed successor ``claude-agent-sdk==0.2.187``,
 which speaks the CLI 2.1.x protocol and declares 2.1.191 as its matched CLI
 (``claude_agent_sdk/_cli_version.py``). Both ends were bumped together.
 
@@ -41,8 +41,8 @@ UV_LOCK = REPO_ROOT / "uv.lock"
 # Keep these two in lockstep — bump BOTH only to a pair verified to boot to a
 # clean init (real boot needs OAuth + network + an image build, so CI verifies
 # the contract, not the handshake).
-EXPECTED_CLI_VERSION = "2.1.191"
-EXPECTED_SDK_SPEC = "claude-agent-sdk==0.2.110"
+EXPECTED_CLI_VERSION = "2.1.330"
+EXPECTED_SDK_SPEC = "claude-agent-sdk==0.2.187"
 
 
 def test_dockerfile_pins_cli_version():
@@ -103,14 +103,14 @@ def test_uv_lock_pins_sdk_exactly():
 
     # The resolved package version block must be present…
     assert re.search(
-        r'name = "claude-agent-sdk"\nversion = "0\.2\.110"', text
+        r'name = "claude-agent-sdk"\nversion = "0\.2\.187"', text
     ), (
-        "uv.lock must resolve claude-agent-sdk==0.2.110; run `uv lock` after "
+        "uv.lock must resolve claude-agent-sdk==0.2.187; run `uv lock` after "
         "bumping the pin in pyproject.toml so lockfile installs match."
     )
     # …and the editable root must depend on it with the exact specifier.
-    assert '{ name = "claude-agent-sdk", specifier = "==0.2.110" }' in text, (
-        "uv.lock requires-dist must pin claude-agent-sdk to ==0.2.110."
+    assert '{ name = "claude-agent-sdk", specifier = "==0.2.187" }' in text, (
+        "uv.lock requires-dist must pin claude-agent-sdk to ==0.2.187."
     )
 
     # The frozen predecessor must be fully gone (package block + specifier).

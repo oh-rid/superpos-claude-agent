@@ -25,7 +25,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 # real task run. Keep this in lockstep with the claude-agent-sdk pin in
 # requirements.txt. (Supersedes the interim CLI 2.0.14 / claude-code-sdk 0.0.25
 # pin.)
-RUN npm install -g @anthropic-ai/claude-code@2.1.191
+RUN npm install -g @anthropic-ai/claude-code@2.1.330
 
 # uv / uvx — used to launch MiniMax's web-search MCP (uvx minimax-coding-plan-mcp)
 # on shim backends. Harmless on native Anthropic (only invoked when configured).
