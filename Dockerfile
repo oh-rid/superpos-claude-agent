@@ -38,6 +38,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
+# Bot platform (rids): the core package ships Superpos tool modules
+# (superpos-issues/-knowledge/-tracks/...). Their API is gone for this agent —
+# drop them so module_setup neither links their scripts onto PATH nor writes
+# their docs into CLAUDE.md (Claude would call a dead API).
+RUN rm -rf "$(python3 -c 'import os, superpos_agent_core; print(os.path.dirname(superpos_agent_core.__file__))')"/modules/superpos-*
+
 COPY src/ /app/src/
 COPY entrypoint.sh /app/entrypoint.sh
 COPY workspace/ /workspace/
