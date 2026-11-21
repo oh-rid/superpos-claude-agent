@@ -12,6 +12,15 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     apt-get update && apt-get install -y --no-install-recommends gh && \
     rm -rf /var/lib/apt/lists/*
 
+# Bot platform (rids): the club call-summary skill builds a branded PDF with
+# headless Chromium (meetings/_tools/build-summary-pdf.py finds `chromium` on
+# PATH and passes --no-sandbox). The PDF asks for Nimbus Sans / PT Serif /
+# Arial: URW base35, ParaType and Liberation cover them, with Cyrillic.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends chromium fonts-urw-base35 \
+      fonts-paratype fonts-liberation fonts-dejavu-core && \
+    rm -rf /var/lib/apt/lists/*
+
 # Pin the CLI. The in-process superpos_ask MCP server + streaming control
 # protocol in claude_executor.py are a matched pair with the Python SDK, which
 # is now `claude-agent-sdk` 0.2.x (the renamed successor to the frozen
@@ -37,6 +46,10 @@ WORKDIR /app
 # (the `git+https://…` line), so no parent-directory build context required.
 COPY requirements.txt .
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
+
+# Bot platform (rids): libraries of the call-summary PDF builder (the skill
+# otherwise expects them in meetings/_tools/.pylib on each machine).
+RUN pip install --no-cache-dir --break-system-packages markdown pillow qrcode
 
 # Bot platform (rids): the core package ships Superpos tool modules
 # (superpos-issues/-knowledge/-tracks/...). Their API is gone for this agent —
