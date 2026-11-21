@@ -79,7 +79,14 @@ RUN mkdir -p /workspace/.claude/modules-bin && \
 ENV PATH="/workspace/.claude/modules-bin:$PATH"
 
 # Create non-root user (required for bypassPermissions mode)
-RUN useradd -m -s /bin/bash -u 1001 agent && \
+# Bot platform (rids): AGENT_UID lets a host run the agent under the host
+# owner's uid, so read-only mounts of owner-only data (the community sources:
+# collectors chmod every file 0600) are readable. The base image's `node` user
+# holds uid 1000 and is dropped only when that uid is requested.
+ARG AGENT_UID=1001
+RUN if getent passwd "${AGENT_UID}" >/dev/null; then \
+      userdel -r "$(getent passwd "${AGENT_UID}" | cut -d: -f1)" 2>/dev/null || true; fi && \
+    useradd -m -s /bin/bash -u "${AGENT_UID}" agent && \
     mkdir -p /home/agent/.claude && \
     chown -R agent:agent /workspace /home/agent/.claude
 
