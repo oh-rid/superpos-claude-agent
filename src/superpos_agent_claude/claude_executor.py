@@ -60,6 +60,10 @@ from .runtime_config import ClaudeRuntimeConfig
 
 log = logging.getLogger(__name__)
 
+# Сколько знаков ответа отдаём платформе в complete_task. Upstream резал до
+# последних 2000 — платформа rids хранит ответ целиком (её предел 100 000).
+_RESULT_MAX_CHARS = int(os.environ.get("AGENT_RESULT_MAX_CHARS", "100000"))
+
 
 class PersonaRefreshFailed(RuntimeError):
     """Raised by ``update_persona`` when the assembled-prompt fetch
@@ -1520,7 +1524,7 @@ class ClaudeExecutor(Executor):
                         log.debug("Failed to mark timed-out task %s", task_id)
                 return
 
-            result = full_text[-2000:] if len(full_text) > 2000 else full_text
+            result = full_text[-_RESULT_MAX_CHARS:]
             summary = {
                 "description": f"{label.capitalize()}: automated background task",
                 "output_excerpt": full_text[:500] if full_text else None,
@@ -1941,7 +1945,7 @@ class ClaudeExecutor(Executor):
                     await streamer.finish()
 
                     if req.source == "superpos" and req.superpos_task_id and self._superpos:
-                        result = full_text[-2000:] if len(full_text) > 2000 else full_text
+                        result = full_text[-_RESULT_MAX_CHARS:]
                         elapsed = int(time.monotonic() - t0)
                         summary = {
                             "description": req.prompt[:200],
