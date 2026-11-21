@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
+import superpos_agent_core.main as _core_main
 from superpos_agent_core import run_agent
 
 from .claude_executor import ClaudeExecutor
@@ -12,6 +13,13 @@ from .config import ClaudeConfig
 from .runtime_config import ClaudeRuntimeConfig
 
 log = logging.getLogger(__name__)
+
+# Bot platform (rids): the task server deliberately grants only the task
+# lifecycle (tasks:read/claim/update) — no sub-task creation, no knowledge
+# writes. Core would otherwise post "grant them in the Superpos dashboard" to
+# Telegram on every start; that dashboard no longer exists for this agent.
+# Required permissions are still checked and reported.
+_core_main._OPTIONAL_PERMISSIONS = ()
 
 
 async def main() -> None:

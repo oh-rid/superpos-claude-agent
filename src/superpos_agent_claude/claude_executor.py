@@ -1935,6 +1935,12 @@ class ClaudeExecutor(Executor):
 
                         text = self._extract_text(message)
                         if text:
+                            # Each AssistantMessage is a separate model turn
+                            # (tool calls in between); without a separator the
+                            # turns glue into "wait.The first" in Telegram and
+                            # in the task result.
+                            if full_text and not full_text.endswith("\n") and not text.startswith("\n"):
+                                text = "\n\n" + text
                             full_text += text
                             await streamer.append(text)
 

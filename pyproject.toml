@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Superpos" }]
 dependencies = [
-    "superpos-agent-core~=0.1.12",
+    "superpos-agent-core==0.1.15",
     # Pinned exactly to stay in lockstep with the CLI pin in Dockerfile
     # (@anthropic-ai/claude-code@2.1.330). See issue #40 / requirements.txt.
     "claude-agent-sdk==0.2.187",

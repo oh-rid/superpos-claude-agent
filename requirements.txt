@@ -1,4 +1,4 @@
-superpos-agent-core~=0.1.12
+superpos-agent-core==0.1.15
 # Pinned exactly: must match the CLI pin in Dockerfile (@anthropic-ai/claude-code@2.1.330).
 # The SDK + CLI are a matched control-protocol pair and must move in lockstep.
 # claude-agent-sdk is the renamed successor to the frozen claude-code-sdk (which
