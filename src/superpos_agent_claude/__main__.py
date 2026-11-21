@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 # Required permissions are still checked and reported.
 _core_main._OPTIONAL_PERMISSIONS = ()
 
-# Heartbeat carries the agent's own Telegram bot name/@username (rids_platform).
+# Telegram bot name/@username go to the platform only when it asks (rids_platform).
 rids_platform.install()
 
 
